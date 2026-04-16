@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>셀러 주소 정리기</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="card hero">
+        <h1>셀러 주소 정리기</h1>
+        <p class="subtitle">
+          문자로 받은 주소를 붙여넣고, 우편번호/기본주소/상세주소를 분리해서
+          바로 복사하세요.
+        </p>
+      </section>
+
+      <section class="card">
+        <label for="rawAddress" class="label">받은 주소 원문</label>
+        <textarea
+          id="rawAddress"
+          placeholder="예) 경기도 성남시 분당구 판교역로 235 에이치스퀘어 N동 12층 1203호, 홍길동 010-1234-5678"
+        ></textarea>
+
+        <div class="button-row">
+          <button id="searchButton" class="button primary" type="button">
+            주소 추출 시작
+          </button>
+          <button id="resetButton" class="button ghost" type="button">
+            초기화
+          </button>
+        </div>
+
+        <p class="hint">
+          문자 내용을 한 번만 붙여넣으면, 아래에 카카오 검색창이 자동으로
+          열립니다.
+        </p>
+      </section>
+
+      <section class="card">
+        <div class="search-header">
+          <h2>주소 검색</h2>
+          <button id="toggleSearchButton" class="button ghost" type="button">
+            검색창 닫기
+          </button>
+        </div>
+        <p class="hint">
+          붙여넣은 내용에서 추출한 주소로 바로 검색됩니다. 여기서는 결과만
+          선택하면 됩니다.
+        </p>
+        <div id="postcodeWrap" class="postcode-wrap hidden"></div>
+      </section>
+
+      <section class="card">
+        <h2>분리 결과</h2>
+
+        <div class="result-grid">
+          <div class="field">
+            <label for="postcode" class="label">우편번호</label>
+            <div class="copy-field">
+              <input id="postcode" type="text" readonly />
+              <button data-copy-target="postcode" class="button small" type="button">
+                복사
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="address" class="label">기본 주소</label>
+            <div class="copy-field">
+              <input id="address" type="text" readonly />
+              <button data-copy-target="address" class="button small" type="button">
+                복사
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="detailAddress" class="label">상세 주소</label>
+            <div class="copy-field">
+              <input id="detailAddress" type="text" readonly />
+              <button
+                data-copy-target="detailAddress"
+                class="button small"
+                type="button"
+              >
+                복사
+              </button>
+            </div>
+          </div>
+
+          <div class="field field-full">
+            <label for="fullAddress" class="label">최종 주소</label>
+            <div class="copy-field">
+              <input id="fullAddress" type="text" readonly />
+              <button data-copy-target="fullAddress" class="button small" type="button">
+                복사
+              </button>
+            </div>
+          </div>
+
+          <div class="field field-full">
+            <label for="excelLine" class="label">엑셀 붙여넣기용</label>
+            <textarea
+              id="excelLine"
+              class="excel-output"
+              readonly
+              placeholder="우편번호[TAB]최종주소"
+            ></textarea>
+            <button id="copyExcelButton" class="button primary wide" type="button">
+              엑셀용 한 줄 복사
+            </button>
+          </div>
+        </div>
+
+        <p id="statusMessage" class="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
