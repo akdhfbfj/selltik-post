@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>셀틱 주소 정리기</title>
+    <title>셀틱 우편번호 검색</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <main class="app">
       <section class="card hero">
-        <h1>셀틱 주소 정리기</h1>
+        <h1>셀틱 우편번호 검색</h1>
         <p class="subtitle">
           문자로 받은 주소를 붙여넣고, 우편번호/기본주소/상세주소를 분리해서
           바로 복사하세요.
@@ -20,7 +20,7 @@
         <label for="rawAddress" class="label">받은 주소 원문</label>
         <textarea
           id="rawAddress"
-          placeholder="예) 경기도 성남시 분당구 판교역로 235 에이치스퀘어 N동 12층 1203호, 홍길동 010-1234-5678"
+          placeholder="예) 경기도 성남시 분당구 판교역로 235 에이치스퀘어 N동 12층 1203호"
         ></textarea>
 
         <div class="button-row">
@@ -33,7 +33,7 @@
         </div>
 
         <p class="hint">
-          문자 내용을 한 번만 붙여넣으면, 아래에 카카오 검색창이 자동으로
+          문자 내용을 한 번만 붙여넣으면, 아래에 검색창이 자동으로
           열립니다.
         </p>
       </section>
@@ -57,9 +57,9 @@
 
         <div class="result-grid">
           <div class="field">
-            <label for="postcode" class="label">우편번호</label>
+            <label for="postcode" class="label">우편번호 (수정 가능)</label>
             <div class="copy-field">
-              <input id="postcode" type="text" readonly />
+              <input id="postcode" type="text" />
               <button data-copy-target="postcode" class="button small" type="button">
                 복사
               </button>
@@ -67,9 +67,9 @@
           </div>
 
           <div class="field">
-            <label for="address" class="label">기본 주소</label>
+            <label for="address" class="label">기본 주소 (수정 가능)</label>
             <div class="copy-field">
-              <input id="address" type="text" readonly />
+              <input id="address" type="text" />
               <button data-copy-target="address" class="button small" type="button">
                 복사
               </button>
@@ -77,9 +77,9 @@
           </div>
 
           <div class="field">
-            <label for="detailAddress" class="label">상세 주소</label>
+            <label for="detailAddress" class="label">상세 주소 (수정 가능)</label>
             <div class="copy-field">
-              <input id="detailAddress" type="text" readonly />
+              <input id="detailAddress" type="text" />
               <button
                 data-copy-target="detailAddress"
                 class="button small"
@@ -114,11 +114,12 @@
           </div>
         </div>
 
+        <p class="hint">분리 결과 칸은 직접 수정할 수 있습니다.</p>
         <p id="statusMessage" class="status" aria-live="polite"></p>
       </section>
     </main>
 
     <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260416b"></script>
   </body>
 </html>

@@ -23,18 +23,59 @@ function normalizeSpaces(text) {
   return text.replace(/\s+/g, " ").trim();
 }
 
+function normalizeRoadSpacing(text) {
+  return normalizeSpaces(
+    text
+      .replace(/(로|길|대로|거리)(\d)/g, "$1 $2")
+      .replace(/(번길|번로)(\d)/g, "$1 $2")
+  );
+}
+
 function extractDetailAddress(rawText) {
+  const lines = rawText
+    .split("\n")
+    .map((line) =>
+      normalizeSpaces(line.replace(/,/g, " ").replace(/\d{2,3}-\d{3,4}-\d{4}/g, " "))
+    )
+    .filter(Boolean);
+
   const cleaned = normalizeSpaces(
     rawText.replace(/[,\n]/g, " ").replace(/\d{2,3}-\d{3,4}-\d{4}/g, " ")
   );
 
+  const roadAddressPattern =
+    /(.*?[가-힣A-Za-z0-9]+(?:로|길|대로|거리|번길|번로)\s*\d[\d\-]*)(?:\s+(.+))?$/;
+
+  for (const line of lines) {
+    const roadAddressMatch = line.match(roadAddressPattern);
+
+    if (roadAddressMatch) {
+      const base = normalizeRoadSpacing(roadAddressMatch[1]);
+      const detail = normalizeSpaces(roadAddressMatch[2] || "");
+
+      if (detail) {
+        return { base: normalizeSpaces(`${lines[0] === line ? "" : lines[0]} ${base}`), detail };
+      }
+
+      return { base: normalizeSpaces(`${lines[0] === line ? "" : lines[0]} ${base}`), detail: "" };
+    }
+  }
+
+  const roadAddressMatch = cleaned.match(roadAddressPattern);
+
+  if (roadAddressMatch) {
+    const base = normalizeRoadSpacing(roadAddressMatch[1]);
+    const detail = normalizeSpaces(roadAddressMatch[2] || "");
+    return { base, detail };
+  }
+
   const detailPatterns = [
     /((?:산)?\d+[A-Za-z\-]*동\s*\d+[A-Za-z\-]*호(?:\s*\d+층)?)/,
     /(\d+[A-Za-z\-]*동\s*\d+[A-Za-z\-]*호)/,
+    /((?:지하\s*)?\d+층\s*[A-Za-z0-9가-힣]+)/,
     /(\d+층\s*\d+[A-Za-z\-]*호)/,
     /([A-Za-z0-9가-힣]+동\s*\d+호)/,
     /(\d+[A-Za-z\-]*호)/,
-    /([A-Za-z0-9가-힣]+동)/,
     /(\d+층)/,
   ];
 
@@ -64,15 +105,24 @@ function buildExtraAddress(data) {
   return extras.length ? ` (${extras.join(", ")})` : "";
 }
 
-function updateOutputs(postcode, address, detailAddress) {
-  const detail = normalizeSpaces(detailAddress);
-  const fullAddress = detail ? `${address} ${detail}` : address;
+function syncDerivedOutputs() {
+  const postcode = normalizeSpaces(postcodeInput.value);
+  const address = normalizeSpaces(addressInput.value);
+  const detail = normalizeSpaces(detailAddressInput.value);
+  const fullAddress = normalizeSpaces(detail ? `${address} ${detail}` : address);
 
   postcodeInput.value = postcode;
   addressInput.value = address;
   detailAddressInput.value = detail;
   fullAddressInput.value = fullAddress;
   excelLineInput.value = `${postcode}\t${fullAddress}`;
+}
+
+function updateOutputs(postcode, address, detailAddress) {
+  postcodeInput.value = postcode;
+  addressInput.value = address;
+  detailAddressInput.value = detailAddress;
+  syncDerivedOutputs();
 }
 
 function showSearchArea() {
@@ -183,6 +233,10 @@ copyButtons.forEach((button) => {
     copyText(target.value, "복사했습니다.");
   });
 });
+
+postcodeInput.addEventListener("input", syncDerivedOutputs);
+addressInput.addEventListener("input", syncDerivedOutputs);
+detailAddressInput.addEventListener("input", syncDerivedOutputs);
 
 rawAddressInput.addEventListener("paste", () => {
   setTimeout(() => {
